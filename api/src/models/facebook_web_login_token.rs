@@ -6,6 +6,4 @@ pub struct FacebookWebLoginToken {
     pub expires_in: u64,
     #[serde(rename = "signedRequest")]
     pub signed_request: String,
-
-    pub reauthorize_required_in: u64,
 }
