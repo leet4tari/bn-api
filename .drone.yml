@@ -257,6 +257,27 @@ steps:
 #      when:
 #          status: failure
 
+    - name: notify
+      image: plugins/slack
+      depends_on:
+        - other-tests
+        - api-tests
+        - integration-tests
+      settings:
+        webhook:
+          from_secret: nomatter_webhook
+        username: drone
+        icon_emoji: drone
+        channel: tari-natterbot
+        when:
+          status: [ success, failure ]
+        template: >
+          {{#success build.status}}
+            {{repo.name}} ({{build.branch}}) <{{ build.link }}|{{ repo.owner }}/{{ repo.name }}#{{truncate build.commit 8}}> build succeeded on {{uppercasefirst build.event}}. Good job {{ build.author }}.
+          {{else}}
+            {{repo.name}} ({{build.branch}}) <{{ build.link }}|{{ repo.owner }}/{{ repo.name }}#{{truncate build.commit 8}}> build failed on {{uppercasefirst build.event}}. Fix me please {{ build.author }}.
+          {{/success}}
+
 services:
     - name: database
       image: postgres:10.4
