@@ -21,6 +21,7 @@ impl DeepLinker for BranchDeepLinker {
         Ok(self.client.links.create(DeepLink {
             data: DeepLinkData {
                 desktop_url: Some(raw_link.to_string()),
+                web_only: true,
                 ..Default::default()
             },
             ..Default::default()

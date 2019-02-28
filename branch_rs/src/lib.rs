@@ -91,7 +91,7 @@ pub struct DeepLink {
 #[derive(Serialize, Default)]
 pub struct DeepLinkData {
     #[serde(rename = "$canonical_identifier")]
-    pub cannonical_identifier: Option<String>,
+    pub canonical_identifier: Option<String>,
     #[serde(rename = "$og_description")]
     pub description: Option<String>,
     #[serde(rename = "$og_title")]
@@ -100,6 +100,8 @@ pub struct DeepLinkData {
     pub image_url: Option<String>,
     #[serde(rename = "$desktop_url")]
     pub desktop_url: Option<String>,
+    #[serde(rename = "$web_only")]
+    pub web_only: bool
 }
 
 #[derive(Debug, Error)]
