@@ -103,7 +103,7 @@ pub fn show_box_office_pricing(role: Roles, should_test_succeed: bool) {
 
     if should_test_succeed {
         let event_expected_json =
-            expected_show_json(event, organization, venue, true, None, None, conn, 1);
+            expected_show_json(role, event, organization, venue, true, None, None, conn, 1);
         let body = support::unwrap_body_to_string(&response).unwrap();
         assert_eq!(response.status(), StatusCode::OK);
         assert_eq!(body, event_expected_json);
@@ -706,6 +706,7 @@ pub fn holds(role: Roles, should_test_succeed: bool) {
 }
 
 pub fn expected_show_json(
+    role: Roles,
     event: Event,
     organization: Organization,
     venue: Venue,
@@ -733,6 +734,8 @@ pub fn expected_show_json(
     struct R {
         id: Uuid,
         name: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        private_access_code: Option<Option<String>>,
         organization_id: Uuid,
         venue_id: Option<Uuid>,
         created_at: NaiveDateTime,
@@ -802,6 +805,19 @@ pub fn expected_show_json(
 
     serde_json::to_string(&R {
         id: event.id,
+        private_access_code: if vec![
+            Roles::Promoter,
+            Roles::OrgMember,
+            Roles::OrgAdmin,
+            Roles::OrgOwner,
+            Roles::Admin,
+        ]
+        .contains(&role)
+        {
+            Some(event.private_access_code)
+        } else {
+            None
+        },
         name: event.name,
         organization_id: event.organization_id,
         venue_id: event.venue_id,

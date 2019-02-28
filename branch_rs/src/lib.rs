@@ -101,7 +101,7 @@ pub struct DeepLinkData {
     #[serde(rename = "$desktop_url")]
     pub desktop_url: Option<String>,
     #[serde(rename = "$web_only")]
-    pub web_only: bool
+    pub web_only: bool,
 }
 
 #[derive(Debug, Error)]

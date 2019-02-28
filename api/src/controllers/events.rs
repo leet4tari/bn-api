@@ -405,11 +405,24 @@ pub fn show(
 
     let (min_ticket_price, max_ticket_price) =
         event.current_ticket_pricing_range(box_office_pricing, connection)?;
+    // Show private access code to any admin with write access
+    let show_private_access_code = if let Some(user) = user {
+        user.has_scope_for_organization_event(
+            Scopes::EventWrite,
+            &organization,
+            &event,
+            connection,
+        )?
+    } else {
+        false
+    };
 
     #[derive(Serialize)]
     struct R {
         id: Uuid,
         name: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        private_access_code: Option<Option<String>>,
         organization_id: Uuid,
         venue_id: Option<Uuid>,
         created_at: NaiveDateTime,
@@ -445,6 +458,11 @@ pub fn show(
 
     let payload = &R {
         id: event.id,
+        private_access_code: if show_private_access_code {
+            Some(event.private_access_code)
+        } else {
+            None
+        },
         name: event.name,
         organization_id: event.organization_id,
         venue_id: event.venue_id,
@@ -458,7 +476,6 @@ pub fn show(
         publish_date: event.publish_date,
         promo_image_url: event.promo_image_url,
         cover_image_url: event.cover_image_url,
-
         additional_info: event.additional_info,
         top_line_info: event.top_line_info,
         age_limit: event.age_limit,

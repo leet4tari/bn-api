@@ -378,8 +378,17 @@ fn show() {
     let _event_interest = EventInterest::create(event.id, user.id).commit(conn);
     let test_request = TestRequest::create_with_uri(&format!("/events/{}", event.id));
     let mut path = Path::<PathParameters>::extract(&test_request.request).unwrap();
-    let event_expected_json =
-        base::events::expected_show_json(event, organization, venue, false, None, None, conn, 1);
+    let event_expected_json = base::events::expected_show_json(
+        Roles::User,
+        event,
+        organization,
+        venue,
+        false,
+        None,
+        None,
+        conn,
+        1,
+    );
     path.id = event_id;
     let query_parameters = Query::<EventParameters>::extract(&test_request.request).unwrap();
 
@@ -442,6 +451,7 @@ fn show_private() {
     let test_request = TestRequest::create_with_uri(&format!("/events/{}", event.id));
     let mut path = Path::<PathParameters>::extract(&test_request.request).unwrap();
     let event_expected_json = base::events::expected_show_json(
+        Roles::User,
         event,
         organization.clone(),
         venue.clone(),
@@ -471,9 +481,10 @@ fn show_private() {
     let test_request = TestRequest::create_with_uri(&format!("/events/{}", private_event_id));
     let mut path = Path::<PathParameters>::extract(&test_request.request).unwrap();
     let event_expected_json = base::events::expected_show_json(
-        private_event,
-        organization,
-        venue,
+        Roles::OrgMember,
+        private_event.clone(),
+        organization.clone(),
+        venue.clone(),
         false,
         None,
         None,
@@ -528,6 +539,17 @@ fn show_private() {
 
     let body = support::unwrap_body_to_string(&response).unwrap();
     assert_eq!(response.status(), StatusCode::OK);
+    let event_expected_json = base::events::expected_show_json(
+        Roles::User,
+        private_event,
+        organization,
+        venue,
+        false,
+        None,
+        None,
+        conn,
+        2,
+    );
     assert_eq!(body, event_expected_json);
 }
 
@@ -562,8 +584,17 @@ fn show_with_cancelled_ticket_type() {
     let _event_interest = EventInterest::create(event.id, user.id).commit(conn);
     let test_request = TestRequest::create_with_uri(&format!("/events/{}", event.id));
     let mut path = Path::<PathParameters>::extract(&test_request.request).unwrap();
-    let event_expected_json =
-        base::events::expected_show_json(event, organization, venue, false, None, None, conn, 1);
+    let event_expected_json = base::events::expected_show_json(
+        Roles::User,
+        event,
+        organization,
+        venue,
+        false,
+        None,
+        None,
+        conn,
+        1,
+    );
     path.id = event_id;
     let query_parameters = Query::<EventParameters>::extract(&test_request.request).unwrap();
 
@@ -619,6 +650,7 @@ fn show_with_access_restricted_ticket_type_and_no_code() {
     let test_request = TestRequest::create_with_uri(&format!("/events/{}", event.id));
     let mut path = Path::<PathParameters>::extract(&test_request.request).unwrap();
     let event_expected_json = base::events::expected_show_json(
+        Roles::User,
         event,
         organization,
         venue,
@@ -687,6 +719,7 @@ fn show_with_access_restricted_ticket_type_and_access_code() {
     ));
     let mut path = Path::<PathParameters>::extract(&test_request.request).unwrap();
     let event_expected_json = base::events::expected_show_json(
+        Roles::User,
         event,
         organization,
         venue,
