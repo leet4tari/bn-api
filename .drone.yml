@@ -45,9 +45,7 @@ steps:
       commands:
         - rustup component add rustfmt-preview
         - cargo fmt --all -- --check
-      when:
-          event:
-            exclude: [pull_request]
+
 #
 #    - name: restore-cache
 #      depends_on:
@@ -239,24 +237,6 @@ steps:
           event: [pull_request, push]
           branch: master
 
-#    - name: notify-fail
-#      image: plugins/drone-irc
-#      depends_on:
-#        - cargo-audit
-#        - api-tests
-#        - integration-tests
-#        - other-tests
-#      settings:
-#        prefix: build
-#        nick: drone
-#        channel: bigneon-dev
-#        host: chat.freenode.net
-#        port: 6667
-#        template: |-
-#          *{{build.status}}* <{{build.link}}|{{repo.owner}}/{{repo.name}}#{{truncate build.commit 8}} ({{build.branch}}) by {{build.author}}
-#      when:
-#          status: failure
-
     - name: notify
       image: plugins/slack
       depends_on:
@@ -291,6 +271,6 @@ services:
 
 ---
 kind: signature
-hmac: 00e21d49525ce3cc6cc3204d88b059beab531fd95c62e3ea484cec0102224e48
+hmac: b799dbcea3f0f84ff5d2f63235f2fe6855df183c342706f974c46c4b1269a67b
 
 ...
