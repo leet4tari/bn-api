@@ -243,11 +243,12 @@ steps:
         - other-tests
         - api-tests
         - integration-tests
-      webhook:
-        from_secret: nomatter_webhook
-      username: drone
-      icon_emoji: drone
-      channel: tari-natterbot
+      settings:
+        webhook:
+          from_secret: nomatter_webhook
+        username: drone
+        icon_emoji: drone
+        channel: tari-natterbot
       when:
         status: [ success, failure ]
       template: >
@@ -270,6 +271,6 @@ services:
 
 ---
 kind: signature
-hmac: 86dc53e0a9117cc1937e11fe29e7e75ec9709659c1d66d84162da09d2b91f9a5
+hmac: 9af3615d5f94049026458a3334454442bd29a9a5ebab38662b6f4be8f9b5beb9
 
 ...
